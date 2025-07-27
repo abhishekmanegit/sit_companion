@@ -1,26 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'screens/chat_screen.dart';
 
-void main() {
-  runApp(const MyApp());
+
+void main() => runApp(CampusCompanionApp());
+
+class CampusCompanionApp extends StatefulWidget {
+  @override
+  State<CampusCompanionApp> createState() => _CampusCompanionAppState();
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class _CampusCompanionAppState extends State<CampusCompanionApp> {
+  bool isDarkMode = true;
+
+  void toggleTheme() {
+    setState(() {
+      isDarkMode = !isDarkMode;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
       title: 'Campus Companion',
-      theme: ThemeData(
-        textTheme: GoogleFonts.poppinsTextTheme(),
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
-        useMaterial3: true,
-        scaffoldBackgroundColor: const Color(0xFFF5F6FA),
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData.light(useMaterial3: true),
+      darkTheme: ThemeData.dark(useMaterial3: true),
+      themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
+      home: ChatScreen(
+        isDarkMode: isDarkMode,
+        onToggleTheme: toggleTheme,
       ),
-      home: const ChatScreen(),
     );
   }
 }

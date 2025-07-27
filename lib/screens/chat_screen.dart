@@ -5,7 +5,14 @@ import '../data/faq_data.dart';
 import '../data/ai_service.dart';
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({super.key});
+  final bool isDarkMode;
+  final VoidCallback onToggleTheme;
+
+  const ChatScreen({
+    Key? key,
+    required this.isDarkMode,
+    required this.onToggleTheme,
+  }) : super(key: key);
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -30,10 +37,10 @@ class _ChatScreenState extends State<ChatScreen> {
     Future.delayed(const Duration(milliseconds: 500), () async {
       String reply;
 
-      // Try smart matching
+      // Smart match
       reply = getSmartMatch(input.toLowerCase());
 
-      // If still no match, use AI
+      // If not found, use AI
       if (reply.isEmpty) {
         reply = await AIService.getBotReply(input);
       }
@@ -59,14 +66,24 @@ class _ChatScreenState extends State<ChatScreen> {
     } else if (input.contains("cafeteria") || input.contains("canteen")) {
       return faqData["cafeteria timings"]!;
     }
-
-    return ""; // nothing matched
+    return "";
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("🎓 Campus Companion")),
+      appBar: AppBar(
+        title: const Text("🎓 Campus Companion"),
+        actions: [
+          IconButton(
+            icon: Icon(
+              widget.isDarkMode ? Icons.light_mode : Icons.dark_mode,
+            ),
+            onPressed: widget.onToggleTheme,
+            tooltip: "Toggle Theme",
+          ),
+        ],
+      ),
       body: Column(
         children: [
           Expanded(
@@ -115,4 +132,4 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
     );
   }
-} 
+}
