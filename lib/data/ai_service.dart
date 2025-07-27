@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 
 class AIService {
   // 🔐 Replace this with your OpenRouter API key
-  static const _apiKey = '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';
+  static const _apiKey = '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';
 
   // 🌐 OpenRouter endpoint
   static const _endpoint = 'https://openrouter.ai/api/v1/chat/completions';
@@ -18,7 +18,7 @@ class AIService {
         Uri.parse(_endpoint),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer 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',
+          'Authorization': 'Bearer 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',
           'HTTP-Referer': 'https://campus-companion.app', // optional, use your site if deployed
           'X-Title': 'Campus Companion', // app name
         },
