@@ -2,49 +2,47 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class AIService {
-  // 🔐 Replace this with your OpenRouter API key
-  static const _apiKey = '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';
+  static const _apiKey = 'AIzaSyAxPYZU8_kErjoi0YNeT0Xv-goh578CO18'; // Replace with your actual Gemini API key
+  static const _endpoint = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
 
-  // 🌐 OpenRouter endpoint
-  static const _endpoint = 'https://openrouter.ai/api/v1/chat/completions';
-
-  // 🧠 Choose your model (can be gpt-3.5, mistral, etc.)
-  static const _model = 'openai/gpt-3.5-turbo';
-
-  // 🚀 Main AI Call Function
   static Future<String> getBotReply(String prompt) async {
     try {
       final response = await http.post(
         Uri.parse(_endpoint),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer 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',
-          'HTTP-Referer': 'https://campus-companion.app', // optional, use your site if deployed
-          'X-Title': 'Campus Companion', // app name
+          'X-goog-api-key': _apiKey,
         },
         body: jsonEncode({
-          'model': _model,
-          'messages': [
+          'contents': [
             {
-              'role': 'system',
-              'content': 'You are a helpful and friendly AI assistant for college students, answering campus-related queries clearly and kindly.',
-            },
-            {
-              'role': 'user',
-              'content': prompt,
-            },
-          ],
+              'parts': [
+                {
+                  'text': 'You are a helpful college assistant bot. Answer the following question: $prompt'
+                }
+              ]
+            }
+          ]
         }),
       );
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        return data['choices'][0]['message']['content'].trim();
+        // Extract the response text from Gemini API response structure
+        final candidates = data['candidates'] as List;
+        if (candidates.isNotEmpty) {
+          final content = candidates[0]['content'];
+          final parts = content['parts'] as List;
+          if (parts.isNotEmpty) {
+            return parts[0]['text'].trim();
+          }
+        }
+        return "Sorry, I couldn't generate a response.";
       } else {
-        return "⚠️ AI error ${response.statusCode}: ${response.reasonPhrase}";
+        return "Sorry, I'm having trouble reaching my AI brain 🧠 right now. Status: ${response.statusCode}";
       }
     } catch (e) {
-      return "❌ Failed to connect to AI: $e";
+      return "Error: $e";
     }
   }
 }
